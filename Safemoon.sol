@@ -391,6 +391,9 @@ library Address {
 
                 // solhint-disable-next-line no-inline-assembly
                 assembly {
+                    // mload一次加载32字节，即 mem[p…(p+32))
+                    // let returndata_size := mload(returndata) 返回returndata所指向的内存地址中前32个字节所对应的数据（returndata的数据长度（多少个字节））。
+                    // add(32, returndata) 得出的是returndata所指向的内存地址往后推移32位的内存地址，其存储的是returndata的数据。
                     let returndata_size := mload(returndata)
                     revert(add(32, returndata), returndata_size)
                 }
@@ -716,6 +719,7 @@ contract SafeMoon is Context, IERC20, Ownable {
    
     uint256 private constant MAX = ~uint256(0);
     uint256 private _tTotal = 1000000000 * 10**6 * 10**9;
+    // 取 _tTotal 的整数倍
     uint256 private _rTotal = (MAX - (MAX % _tTotal));
     uint256 private _tFeeTotal;
 
@@ -751,7 +755,8 @@ contract SafeMoon is Context, IERC20, Ownable {
         _;
         inSwapAndLiquify = false;
     }
-    
+
+    // 构造函数
     constructor () public {
         _rOwned[_msgSender()] = _rTotal;
         
